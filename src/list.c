@@ -34,11 +34,9 @@ void print_list(List* l){
 int main(){
 	List* l = init_list();
 	Token* t = init_token();
-	Token* t2 = init_token();
-	printf("%i",push_token(&l, t) );
-	printf("%i",push_token(&l, t2) );
-	printf("\n");
+	push_token(&l, t);
 	print_list(l);
+	destoy_list(&l);
 	return 0;
 }
 
@@ -79,7 +77,15 @@ int push_token(List** l, Token *t){
 }
 
 void destoy_list(List **l){
-	if(*l = NULL) return;
-	
-
+	if(*l == NULL) return;
+	Token* past_t;
+	Token* current_t = (*l)->head;
+	while(current_t->next){
+		past_t = current_t;
+		current_t = current_t->next;
+		free(past_t);
+	}
+	free(current_t);
+	free(*l);
+	*l = NULL;
 }
