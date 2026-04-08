@@ -41,6 +41,7 @@ int main(){
 }
 
 //DEFINICION DE METODOS NECESARIOS
+//tokens tendra su propia implementacion en src donde va este metodo 
 Token* init_token(){
 	Token* t;
 	t = malloc(sizeof(Token));
