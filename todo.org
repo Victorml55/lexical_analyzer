@@ -1,0 +1,14 @@
+#+title: analizador lexico
+
+* DONE leer el archivo
+
+* TODO lista para almacenar los tokens
+- [X] inicia la lista
+- [X] pushear token a la listas
+- [ ] destruir la lista
+
+* TODO automata para la clasificacion de los tokens
+- [ ] clasifica la el token
+- [ ] devuelve el token para su enlistado ya con su clasificacion
+
+* TODO retorna la lista con los tokens
