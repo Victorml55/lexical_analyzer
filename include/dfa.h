@@ -2,6 +2,6 @@
 #define DFA_H
 #include "token.h"
 
-typedef struct Dfa Dfa;
+Token* get_next_token(const char** input);
 
 #endif
