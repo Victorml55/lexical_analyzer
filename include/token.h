@@ -2,11 +2,12 @@
 #define TOKEN_H
 
 typedef enum Token_type{
-	VARIABLES = 1,
-	KEY_WORD = 2,
+	VARIABLE = 1, //alfa (hecho)
+	KEYWORD = 2, //alfa (hecho)
 	NUMBER = 3,
-	OPERATION = 4,
-	UNKNOWN = -1
+	OPERATION = 4, //(hecho)
+	STRING = 5,
+	UNKNOWN = -1 //(hecho)
 }Token_type;
 
 typedef struct Token{
