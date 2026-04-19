@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <limits.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,13 +29,13 @@ int is_operation(const char str){
 	return(str == operations[0] || str == operations[1] || str == operations[2] || str == operations[3]);
 }
 
-//LE FALTA RECONOCER A NUMEROS Y STRINGS
+//LE FALTA RECONOCER A NUMEROS
 Token* get_next_token(const char* input) {
 	if(!input) return NULL;
 	Token* t = init_token();
 	if(!t) return NULL;
 	const char* str = input;
-
+	//alfabetos
 	if(isalpha(*str)){
 		if(is_keyword(str)){
 			t->lexeme = strdup(str);
@@ -54,9 +55,15 @@ Token* get_next_token(const char* input) {
 			t->type = VARIABLE;
 			return t;
 		}
+		//numeros
 	}else if(isdigit(*str)){
+		while(isdigit(*str)){
+			
+			str++;
+		}
 		
-	}else if(is_operation(*str)){
+		//operaciones
+	}if(is_operation(*str)){
 		if(strlen(str) == 1){
 			t->lexeme = strdup(str);
 			t->type = OPERATION;
@@ -66,10 +73,28 @@ Token* get_next_token(const char* input) {
 			t->type = UNKNOWN;
 			return t;			
 		}
-	}else if(*str == '"'){
-		*str++;
-		return NULL // INCOMPLETA
+		//cadenas
+	}else if(*str == 39){
+		str++;
+		while(*str != EOF){
+			str++;
+			if(*str == 39){
+				printf("es una cadena \n");
+				t->type = STRING;
+				t->lexeme = strdup(input);
+				return t; 				
+			}
+		}
+		
+			printf("no se encontro una cadena\n");
+			t->lexeme = strdup(str);
+			t->type = UNKNOWN;
+			return t;
+		
+
+		//errores
 	}else{
+	
 		t->lexeme = strdup(str);
 		t->type = UNKNOWN;
 		return t;					
@@ -80,7 +105,7 @@ Token* get_next_token(const char* input) {
 }
 
 int main(){
-	Token* t = get_next_token("ls");
+	Token* t = get_next_token("'Ximena Galindo Mata asdfads adsfadsf 1231'");
 	print_token(t);
 	return 0;
 }
