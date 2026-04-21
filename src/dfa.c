@@ -109,12 +109,18 @@ Token* get_next_token(const char* input) {
 	return NULL;
 }
  
+void clean_buffer(char buffer[1000]){
+	for(int i = 0; i < 1000; i++){
+		buffer[i] = 0;
+	}
+}
+
 List* tokenize(const char* input){
 	if(!input) return NULL;
 
 	List* l = init_list();
 	if(!l) return NULL;
-
+ 
 	const char* str = input;
 
 	char buffer[1000];
@@ -126,7 +132,8 @@ List* tokenize(const char* input){
 			Token* t = get_next_token(buffer);
 			push_token(l,t);
 			str++;
-			i = 0;
+			i= 0;
+			clean_buffer(buffer);
 		}
 		if(*str == 0){
 			Token* t = get_next_token(buffer);
@@ -144,10 +151,10 @@ List* tokenize(const char* input){
 
   
 int main(){
-	//Token* t = get_next_token("ls");
-	List* l = tokenize("+");
-	print_list(l);
-	//print_token(t);
+	Token* t = get_next_token("'gaspar es puto'");
+	//List* l = tokenize("gaspar + 1 'como estas'");
+	//	print_list(l);
+	print_token(t);
 	return 0;
 }
 
