@@ -1,3 +1,2 @@
 # lexical_analyzer
-in progres ;)
-missing finite automata to classify tokens
+a simple flexer for a little bash interpreter in development yet
