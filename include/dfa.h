@@ -2,6 +2,6 @@
 #define DFA_H
 #include "token.h"
 
-Token* get_next_token(const char** input);
+List* tokenize(const char* input);
 
 #endif

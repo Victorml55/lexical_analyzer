@@ -84,14 +84,12 @@ Token* get_next_token(const char* input) {
 		while(*str != EOF){
 			str++;
 			if(*str == 39){
-				printf("es una cadena \n");
 				t->type = STRING;
 				t->lexeme = strdup(input);
 				return t; 				
 			}
 		}
 		
-		printf("no se encontro una cadena\n");
 		t->lexeme = strdup(str);
 		t->type = UNKNOWN;
 		return t;
@@ -99,7 +97,6 @@ Token* get_next_token(const char* input) {
 
 		//errores
 	}else{
-		printf("esto es un error no deberias estar aqui!\n");
 		t->lexeme = strdup(str);
 		t->type = UNKNOWN;
 		return t;					
@@ -140,6 +137,13 @@ List* tokenize(const char* input){
 			push_token(l,t);
 			i = 0;
 			return l;
+		}if(*str == 39){
+			int flag = 1;
+			while(flag){
+				buffer[i] = *str;
+				i++; str++;
+				if(*str == 39) flag = 0;
+			}
 		}
 		buffer[i] = *str;
 		str++;
@@ -147,14 +151,10 @@ List* tokenize(const char* input){
 	}
 	return NULL;
 }
-
-
   
 int main(){
-	Token* t = get_next_token("'gaspar es puto'");
-	//List* l = tokenize("gaspar + 1 'como estas'");
-	//	print_list(l);
-	print_token(t);
+	List* l = tokenize("gaspar + 1 'como estas' ls jose angel");
+	print_list(l);
 	return 0;
 }
 
