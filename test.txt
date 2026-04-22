@@ -1,4 +1,0 @@
-esto es un texto de prueba
-esta escrito con el fin de testear un analizador lexico
-para la clase de lenguajes y automatas II
-;

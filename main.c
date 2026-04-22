@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "include/list.h"
 #include "include/dfa.h"
+#include "include/token.h"
 
 char* get_file_content(const char* route) {
     FILE* file = fopen(route, "rb");
-    if (!file) return NULL;
+    if (!file) {
+	    printf("FILE not found\n");
+	    return NULL;	    
+    }
 
     fseek(file, 0, SEEK_END);
     long size = ftell(file); 
@@ -19,9 +24,19 @@ char* get_file_content(const char* route) {
     return buffer;
 }
 
-int main(){
 
-	printf("%s\n", get_file_content("test2.ked"));
-
+int main(int argc, char* argv[]){
+	if(argv[1]){
+		char* path = argv[1];
+		char* input = get_file_content(path);
+		if(!input) return -1;
+		List* l = tokenize(input);
+		print_list(l);
+		return 0;
+	}else{
+		printf("modo sin archivo\n");
+		char* input;
+		
+	}
 	return 0;
 }

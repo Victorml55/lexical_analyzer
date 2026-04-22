@@ -14,7 +14,7 @@ char* keywords[] = {
 };
 
 char operations[] = {
-	'-', '*', '/', '+'
+	'-', '*', '/', '+', '='
 };
 
 int is_keyword(const char* str) {
@@ -28,7 +28,7 @@ int is_keyword(const char* str) {
 }
 
 int is_operation(const char str){
-	return(str == operations[0] || str == operations[1] || str == operations[2] || str == operations[3]);
+	return(str == operations[0] || str == operations[1] || str == operations[2] || str == operations[3] || str == operations[4]);
 }
 
 Token* get_next_token(const char* input) {
@@ -124,6 +124,13 @@ List* tokenize(const char* input){
 	int i = 0;
   
 	while(1){
+		if(*str == 10) {
+			Token* t = get_next_token(buffer);
+			push_token(l,t);
+			i = 0;
+			clean_buffer(buffer);
+			str++;
+		}
 		if(*str == 32) {
 			buffer[i] = '\0';
 			Token* t = get_next_token(buffer);
@@ -151,10 +158,3 @@ List* tokenize(const char* input){
 	}
 	return NULL;
 }
-  
-int main(){
-	List* l = tokenize("gaspar + 1 'como estas' ls jose angel");
-	print_list(l);
-	return 0;
-}
-
