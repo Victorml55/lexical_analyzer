@@ -3,11 +3,6 @@
 #include <string.h>
 #include "../include/list.h"
 
-struct List{
-	Token* head;
-	Token* tail;
-	
-};
 
 List* init_list();
 int push_token(List* l, Token* t);

@@ -3,7 +3,13 @@
 #include <stddef.h>
 #include "token.h"
 
-typedef struct List List;
+typedef struct List{
+	Token* head;
+	Token* tail;
+	
+}List;
+
+
 
 List* init_list();
 int push_token(List* l, Token* t);

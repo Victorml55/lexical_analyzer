@@ -1,5 +1,5 @@
 CC = cc
-SRC = src/list.c src/dfa.c src/token.c
+SRC = src/list.c src/dfa.c src/token.c src/parser.c
 FLAGS = -std=c99 -pedantic
 MAIN = main.c
 

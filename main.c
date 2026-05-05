@@ -4,39 +4,22 @@
 #include "include/list.h"
 #include "include/dfa.h"
 #include "include/token.h"
+#include "include/parser.h"
 
-char* get_file_content(const char* route) {
-    FILE* file = fopen(route, "rb");
-    if (!file) {
-	    printf("FILE not found\n");
-	    return NULL;	    
-    }
+int main(){
 
-    fseek(file, 0, SEEK_END);
-    long size = ftell(file); 
-    rewind(file);
+	/* char *input = "x = 3 + 2 * 4"; */
+	/* char *input = "x = 5"; */
+char *input = "if x < 5 then y = 1";
 
-    char* buffer = (char*)malloc(size + 1);
-    fread(buffer, 1, size, file);
-    buffer[size] = '\0';
-    
-    fclose(file);
-    return buffer;
-}
+/* char *input = "x = 5\ny = x + 3\nif y > 6 then z = 1 else z = 0"; */
 
-
-int main(int argc, char* argv[]){
-	if(argv[1]){
-		char* path = argv[1];
-		char* input = get_file_content(path);
-		if(!input) return -1;
-		List* l = tokenize(input);
-		print_list(l);
-		return 0;
-	}else{
-		printf("No file input\n");
-		char* input;
-		
-	}
+	List* tokens = tokenize(input);     
+	print_list(tokens);
+	Parser* p = parser_init(tokens);
+	ASTNode* ast = parse_program(p);
+	ast_print(ast, 0);                  
+	ast_free(ast);
+	parser_free(p);
 	return 0;
 }

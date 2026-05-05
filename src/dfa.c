@@ -14,25 +14,25 @@ char* command[] = {
 };
 
 char* keywords[] = {
-	"if", "while", "for", "else"
+	"if", "while", "for", "else", "then"
 };
 
 char operations[] = {
-	'-', '*', '/', '+', '='
+	'-', '*', '/', '+', '=', '<', '>'
 };
 
-int is_command(const char* str) {
+int is_keyword(const char* str) {
 	if(!str) return -1;
-	int num_command = sizeof(command)/sizeof(command[0]);
-	for(int i = 0; i < num_command; i++){
-		int flag = strcmp(str, command[i]);
+	int num_keyword = sizeof(keywords)/sizeof(keywords[0]);
+	for(int i = 0; i < num_keyword; i++){
+		int flag = strcmp(str, keywords[i]);
 		if(flag == 0) return 1;
 	}
 	return 0;
 }
 
 int is_operation(const char str){
-	return(str == operations[0] || str == operations[1] || str == operations[2] || str == operations[3] || str == operations[4]);
+	return(str == operations[0] || str == operations[1] || str == operations[2] || str == operations[3] || str == operations[4] || str == operations[5] || str == operations[6]);
 }
 
 Token* get_next_token(const char* input) {
@@ -42,9 +42,9 @@ Token* get_next_token(const char* input) {
 	const char* str = input;
 	//alfabetos
 	if(isalpha(*str)){
-		if(is_command(str)){
+		if(is_keyword(str)){
 			t->lexeme = strdup(str);
-			t->type = IDENTIFIER;
+			t->type = KEYWORD;
 			return t;
 		}else{
 			const char *aux = str;
