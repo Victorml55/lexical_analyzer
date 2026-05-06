@@ -7,6 +7,7 @@ typedef enum Token_type{
 	NUMBER = 3, 
 	OPERATION = 4, 
 	STRING = 5,
+	SYMBOLS = 6,
 	UNKNOWN = -1 
 }Token_type;
 

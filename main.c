@@ -7,13 +7,7 @@
 #include "include/parser.h"
 
 int main(){
-
-	/* char *input = "x = 3 + 2 * 4"; */
-	/* char *input = "x = 5"; */
-char *input = "if x < 5 then y = 1";
-
-/* char *input = "x = 5\ny = x + 3\nif y > 6 then z = 1 else z = 0"; */
-
+	char *input = "x = (3+2)";
 	List* tokens = tokenize(input);     
 	print_list(tokens);
 	Parser* p = parser_init(tokens);
@@ -22,4 +16,6 @@ char *input = "if x < 5 then y = 1";
 	ast_free(ast);
 	parser_free(p);
 	return 0;
+
 }
+

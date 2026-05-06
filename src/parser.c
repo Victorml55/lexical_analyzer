@@ -3,9 +3,6 @@
 #include <string.h>
 #include "../include/parser.h"
 #include "../include/list.h"
-/* ================================================================
- * Utilidades internas
- * ================================================================ */
 
 static ASTNode* make_node(NodeType type) {
     ASTNode* n = calloc(1, sizeof(ASTNode));
@@ -14,7 +11,6 @@ static ASTNode* make_node(NodeType type) {
     return n;
 }
 
-/* Avanza al siguiente token. */
 static void advance(Parser* p) {
     if (p->current && p->current->next)
         p->current = p->current->next;
@@ -22,20 +18,14 @@ static void advance(Parser* p) {
         p->current = NULL;
 }
 
-/* Mira el lexema del token actual (sin avanzar). */
 static const char* current_lexeme(Parser* p) {
     return (p->current) ? p->current->lexeme : NULL;
 }
 
-/* Mira el tipo del token actual. */
 static Token_type current_type(Parser* p) {
     return (p->current) ? p->current->type : UNKNOWN;
 }
 
-/*
- * Verifica que el token actual sea una KEYWORD con lexema esperado
- * (ej. "if", "then", "else") y avanza. Si no coincide, error.
- */
 static int expect_keyword(Parser* p, const char* kw) {
     if (!p->current) {
         fprintf(stderr, "[parser] error: se esperaba keyword '%s' pero llegamos al final\n", kw);
@@ -50,10 +40,6 @@ static int expect_keyword(Parser* p, const char* kw) {
     return 1;
 }
 
-/*
- * Verifica que el token actual sea una OPERATION con lexema esperado
- * (ej. "=", "+") y avanza.
- */
 static int expect_operation(Parser* p, const char* op) {
     if (!p->current) {
         fprintf(stderr, "[parser] error: se esperaba operacion '%s' pero llegamos al final\n", op);
@@ -68,9 +54,6 @@ static int expect_operation(Parser* p, const char* op) {
     return 1;
 }
 
-/* ================================================================
- * Forward declarations (recursión mutua)
- * ================================================================ */
 static ASTNode* parse_statement(Parser* p);
 static ASTNode* parse_assignment(Parser* p);
 static ASTNode* parse_if_statement(Parser* p);
@@ -79,12 +62,10 @@ static ASTNode* parse_expression(Parser* p);
 static ASTNode* parse_term(Parser* p);
 static ASTNode* parse_factor(Parser* p);
 
-/* ================================================================
- * Implementación de las producciones
- * ================================================================
- *
- * PROGRAM -> STATEMENT+
- */
+//productions
+
+//PROGRAM -> STATEMENT+
+
 ASTNode* parse_program(Parser* p) {
     if (!p->current) {
         fprintf(stderr, "[parser] error: lista de tokens vacia\n");
@@ -101,10 +82,10 @@ ASTNode* parse_program(Parser* p) {
             return NULL;
         }
         if (!program->left) {
-            program->left = stmt;   /* primer hijo */
+            program->left = stmt;   
             tail = stmt;
         } else {
-            tail->next = stmt;      /* encadena en lista */
+            tail->next = stmt;      
             tail = stmt;
         }
     }
@@ -117,39 +98,27 @@ ASTNode* parse_program(Parser* p) {
     return program;
 }
 
-/* ----------------------------------------------------------------
- * STATEMENT -> ASSIGNMENT | IF_STATEMENT | EXPRESSION
- *
- * Decisión:
- *   - Si el token actual es IDENTIFIER y el siguiente es '='
- *     → ASSIGNMENT
- *   - Si el token actual es KEYWORD "if"
- *     → IF_STATEMENT
- *   - En cualquier otro caso
- *     → EXPRESSION (puede empezar con IDENTIFIER, NUMBER, STRING, '(')
- * ---------------------------------------------------------------- */
+
+
+//STATEMENT -> ASSIGNMENT | IF_STATEMENT | EXPRESSION
 static ASTNode* parse_statement(Parser* p) {
     if (!p->current) return NULL;
 
-    /* ¿Es ASSIGNMENT? Lookahead: IDENTIFIER seguido de '='       */
-    if (current_type(p) == IDENTIFIER && p->current->next
+
+      if (current_type(p) == IDENTIFIER && p->current->next
         && p->current->next->type == OPERATION
         && strcmp(p->current->next->lexeme, "=") == 0) {
         return parse_assignment(p);
     }
 
-    /* ¿Es IF_STATEMENT?                                           */
-    if (current_type(p) == KEYWORD && strcmp(current_lexeme(p), "if") == 0) {
+      if (current_type(p) == KEYWORD && strcmp(current_lexeme(p), "if") == 0) {
         return parse_if_statement(p);
     }
 
-    /* Por defecto → EXPRESSION                                    */
-    return parse_expression(p);
+      return parse_expression(p);
 }
 
-/* ----------------------------------------------------------------
- * ASSIGNMENT -> IDENTIFIER "=" EXPRESSION
- * ---------------------------------------------------------------- */
+// ASSIGNMENT -> IDENTIFIER "=" EXPRESSION
 static ASTNode* parse_assignment(Parser* p) {
     ASTNode* node = make_node(NODE_ASSIGNMENT);
 
@@ -167,9 +136,9 @@ static ASTNode* parse_assignment(Parser* p) {
     return node;
 }
 
-/* ----------------------------------------------------------------
- * IF_STATEMENT -> "if" CONDITION "then" STATEMENT ("else" STATEMENT)?
- * ---------------------------------------------------------------- */
+
+//IF_STATEMENT -> "if" CONDITION "then" STATEMENT ("else" STATEMENT)?
+
 static ASTNode* parse_if_statement(Parser* p) {
     ASTNode* node = make_node(NODE_IF_STATEMENT);
 
@@ -187,10 +156,10 @@ static ASTNode* parse_if_statement(Parser* p) {
     node->then_branch = parse_statement(p);
     if (!node->then_branch) { ast_free(node); return NULL; }
 
-    /* ("else" STATEMENT)?  → solo si el siguiente token es "else" */
+     /* ("else" STATEMENT)? */
     if (p->current && p->current->type == KEYWORD
         && strcmp(p->current->lexeme, "else") == 0) {
-        advance(p); /* consume "else" */
+        advance(p);
         node->else_branch = parse_statement(p);
         if (!node->else_branch) { ast_free(node); return NULL; }
     }
@@ -198,17 +167,17 @@ static ASTNode* parse_if_statement(Parser* p) {
     return node;
 }
 
-/* ----------------------------------------------------------------
- * CONDITION -> EXPRESSION CONDITIONAL EXPRESSION
- * CONDITIONAL -> "<" | ">"
- * ---------------------------------------------------------------- */
+
+
+//CONDITION -> EXPRESSION CONDITIONAL EXPRESSION
+// CONDITIONAL -> "<" | ">"
+
 static ASTNode* parse_condition(Parser* p) {
     ASTNode* node = make_node(NODE_CONDITION);
 
     node->left = parse_expression(p);
     if (!node->left) { ast_free(node); return NULL; }
 
-    /* CONDITIONAL: esperamos una OPERATION que sea "<" o ">"      */
     if (!p->current || p->current->type != OPERATION
         || (strcmp(p->current->lexeme, "<") != 0
            && strcmp(p->current->lexeme, ">") != 0)) {
@@ -226,9 +195,9 @@ static ASTNode* parse_condition(Parser* p) {
     return node;
 }
 
-/* ----------------------------------------------------------------
- * EXPRESSION -> TERM (( "+" | "-" ) TERM)*
- * ---------------------------------------------------------------- */
+
+//EXPRESSION -> TERM (( "+" | "-" ) TERM)*
+
 static ASTNode* parse_expression(Parser* p) {
     ASTNode* left = parse_term(p);
     if (!left) return NULL;
@@ -246,15 +215,15 @@ static ASTNode* parse_expression(Parser* p) {
 
         op_node->left  = left;
         op_node->right = right;
-        left = op_node;   /* el árbol crece hacia la izquierda     */
+        left = op_node; 
     }
 
     return left;
 }
 
-/* ----------------------------------------------------------------
- * TERM -> FACTOR (( "*" | "/" ) FACTOR)*
- * ---------------------------------------------------------------- */
+
+ //TERM -> FACTOR (( "*" | "/" ) FACTOR)*
+
 static ASTNode* parse_term(Parser* p) {
     ASTNode* left = parse_factor(p);
     if (!left) return NULL;
@@ -278,15 +247,11 @@ static ASTNode* parse_term(Parser* p) {
     return left;
 }
 
-/* ----------------------------------------------------------------
- * FACTOR -> IDENTIFIER
- *         | NUMBER
- *         | STRING
- *         | "(" EXPRESSION ")"
- *
- * Nota: el paréntesis '(' se tokeniza como UNKNOWN en tu lexer;
- * lo manejamos comparando el lexema directamente.
- * ---------------------------------------------------------------- */
+ /* FACTOR -> IDENTIFIER */
+ /*         | NUMBER */
+ /*         | STRING */
+ /*         | "(" EXPRESSION ")" */
+
 static ASTNode* parse_factor(Parser* p) {
     if (!p->current) {
         fprintf(stderr, "[parser] error: se esperaba un factor pero llegamos al final\n");
@@ -318,7 +283,7 @@ static ASTNode* parse_factor(Parser* p) {
     }
 
     /* "(" EXPRESSION ")" */
-    if (current_type(p) == UNKNOWN && p->current->lexeme
+    if (current_type(p) == SYMBOLS && p->current->lexeme
         && strcmp(p->current->lexeme, "(") == 0) {
         advance(p); /* consume '(' */
 
@@ -330,7 +295,7 @@ static ASTNode* parse_factor(Parser* p) {
             ast_free(inner);
             return NULL;
         }
-        advance(p); /* consume ')' */
+        advance(p);
 
         ASTNode* n = make_node(NODE_FACTOR_EXPR);
         n->left = inner;
@@ -342,10 +307,6 @@ static ASTNode* parse_factor(Parser* p) {
             (int)p->current->type);
     return NULL;
 }
-
-/* ================================================================
- * API pública: init / free
- * ================================================================ */
 
 Parser* parser_init(List* token_list) {
     if (!token_list) return NULL;
@@ -359,10 +320,7 @@ void parser_free(Parser* p) {
     free(p);
 }
 
-/* ================================================================
- * Impresión del AST (depuración)
- * ================================================================ */
-
+//debug
 static const char* node_type_name(NodeType t) {
     switch(t) {
         case NODE_PROGRAM:      return "PROGRAM";
@@ -389,10 +347,8 @@ void ast_print(ASTNode* node, int indent) {
     if (node->value) printf(" \"%s\"", node->value);
     printf("\n");
 
-    /* Hijos según tipo */
     switch (node->type) {
         case NODE_PROGRAM:
-            /* lista de sentencias en ->left y ->left->next...     */
             for (ASTNode* s = node->left; s; s = s->next)
                 ast_print(s, indent + 1);
             break;
@@ -417,10 +373,6 @@ void ast_print(ASTNode* node, int indent) {
             break;
     }
 }
-
-/* ================================================================
- * Liberación del AST
- * ================================================================ */
 
 void ast_free(ASTNode* node) {
     if (!node) return;
