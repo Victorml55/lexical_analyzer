@@ -167,8 +167,6 @@ static ASTNode* parse_if_statement(Parser* p) {
     return node;
 }
 
-
-
 //CONDITION -> EXPRESSION CONDITIONAL EXPRESSION
 // CONDITIONAL -> "<" | ">"
 
@@ -194,8 +192,6 @@ static ASTNode* parse_condition(Parser* p) {
 
     return node;
 }
-
-
 //EXPRESSION -> TERM (( "+" | "-" ) TERM)*
 
 static ASTNode* parse_expression(Parser* p) {
@@ -220,7 +216,6 @@ static ASTNode* parse_expression(Parser* p) {
 
     return left;
 }
-
 
  //TERM -> FACTOR (( "*" | "/" ) FACTOR)*
 

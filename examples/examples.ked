@@ -1,0 +1,3 @@
+x = 10
+if x < 11 then x + 10
+echo x
